@@ -1,0 +1,19 @@
+{
+  "name": "starter-template",
+  "version": "1.0.0",
+  "main": "./index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "keystone:dev": "keystone dev"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@keystone-6/auth": "^8.1.0",
+    "@keystone-6/core": "^6.3.1",
+    "@keystone-6/fields-document": "^9.1.1",
+    "dotenv": "^16.4.5",
+    "typescript": "^5.7.2"
+  }
+}

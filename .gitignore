@@ -1,0 +1,6 @@
+*.env
+*node_modules
+*/.keystone
+*/.next
+*.db
+*/public/images/*
