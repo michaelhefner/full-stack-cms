@@ -9,5 +9,12 @@ const GetNavigation = async (obj: any) =>{
     return null;
     
 }
+const GetAllNavigation = async () =>{
+    if (prisma.navigation) {    
+        return await prisma.navigation.findMany();
+    }
+    return null;
+    
+}
 
-export { GetNavigation };
+export { GetNavigation, GetAllNavigation };
