@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "keystone:dev": "cd keystone && npx keystone dev",
     "keystone:build": "cd keystone && npx keystone build",
-    "keystone:start": "cd keystone && npx keystone build",
+    "keystone:start": "cd keystone && npx keystone start",
     "next:build": "cd next && npx next build",
     "next:dev": "cd next && npm run dev -- -p 3001",
     "next:start": "cd next && npm run start -- -p 3001",
