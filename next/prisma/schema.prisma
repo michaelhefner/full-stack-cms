@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource sqlite {
+  provider          = "sqlite"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model Navigation {
+  id         String     @id @default(cuid())
+  title      String     @default("")
+  url        String     @unique @default("")
+  basicpages BasicPage? @relation("BasicPage_navigation")
+}
+
+model BasicPage {
+  id           String      @id @default(cuid())
+  title        String      @default("")
+  navigationId String?     @unique @map("navigation")
+  authorId     String?     @map("author")
+  status       String?     @default("draft")
+  publishedAt  DateTime?   @default(now())
+  author       User?       @relation("BasicPage_author", fields: [authorId], references: [id])
+  navigation   Navigation? @relation("BasicPage_navigation", fields: [navigationId], references: [id])
+  content      Content[]   @relation("BasicPage_content")
+  tags         Tag[]       @relation("BasicPage_tags")
+
+  @@index([authorId])
+}
+
+model Content {
+  id          String      @id @default(cuid())
+  title       String      @default("")
+  authorId    String?     @map("author")
+  content     String      @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
+  status      String?     @default("draft")
+  publishedAt DateTime?   @default(now())
+  author      User?       @relation("Content_author", fields: [authorId], references: [id])
+  basicpages  BasicPage[] @relation("BasicPage_content")
+  tags        Tag[]       @relation("Content_tags")
+
+  @@index([authorId])
+}
+
+model User {
+  id         String      @id @default(cuid())
+  name       String      @default("")
+  email      String      @unique @default("")
+  password   String
+  isAdmin    Boolean     @default(false)
+  createdAt  DateTime?   @default(now())
+  basicpages BasicPage[] @relation("BasicPage_author")
+  content    Content[]   @relation("Content_author")
+}
+
+model Tag {
+  id         String      @id @default(cuid())
+  name       String      @default("")
+  basicpages BasicPage[] @relation("BasicPage_tags")
+  content    Content[]   @relation("Content_tags")
+  Tag_A      Tag[]       @relation("Tag_tags")
+  Tag_B      Tag[]       @relation("Tag_tags")
+}
+
+model Image {
+  id              String  @id @default(cuid())
+  name            String  @default("")
+  altText         String  @default("")
+  image_id        String?
+  image_filesize  Int?
+  image_width     Int?
+  image_height    Int?
+  image_extension String?
+}
