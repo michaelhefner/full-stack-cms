@@ -6,6 +6,7 @@ type Navigation {
   title: String
   url: String
   basicpages: BasicPage
+  parent: Navigation
 }
 
 input NavigationWhereUniqueInput {
@@ -21,6 +22,7 @@ input NavigationWhereInput {
   title: StringFilter
   url: StringFilter
   basicpages: BasicPageWhereInput
+  parent: NavigationWhereInput
 }
 
 input IDFilter {
@@ -77,11 +79,18 @@ input NavigationUpdateInput {
   title: String
   url: String
   basicpages: BasicPageRelateToOneForUpdateInput
+  parent: NavigationRelateToOneForUpdateInput
 }
 
 input BasicPageRelateToOneForUpdateInput {
   create: BasicPageCreateInput
   connect: BasicPageWhereUniqueInput
+  disconnect: Boolean
+}
+
+input NavigationRelateToOneForUpdateInput {
+  create: NavigationCreateInput
+  connect: NavigationWhereUniqueInput
   disconnect: Boolean
 }
 
@@ -94,11 +103,17 @@ input NavigationCreateInput {
   title: String
   url: String
   basicpages: BasicPageRelateToOneForCreateInput
+  parent: NavigationRelateToOneForCreateInput
 }
 
 input BasicPageRelateToOneForCreateInput {
   create: BasicPageCreateInput
   connect: BasicPageWhereUniqueInput
+}
+
+input NavigationRelateToOneForCreateInput {
+  create: NavigationCreateInput
+  connect: NavigationWhereUniqueInput
 }
 
 type BasicPage {
@@ -188,12 +203,6 @@ input BasicPageUpdateInput {
   publishedAt: DateTime
 }
 
-input NavigationRelateToOneForUpdateInput {
-  create: NavigationCreateInput
-  connect: NavigationWhereUniqueInput
-  disconnect: Boolean
-}
-
 input ContentRelateToManyForUpdateInput {
   disconnect: [ContentWhereUniqueInput!]
   set: [ContentWhereUniqueInput!]
@@ -229,11 +238,6 @@ input BasicPageCreateInput {
   publishedAt: DateTime
 }
 
-input NavigationRelateToOneForCreateInput {
-  create: NavigationCreateInput
-  connect: NavigationWhereUniqueInput
-}
-
 input ContentRelateToManyForCreateInput {
   create: [ContentCreateInput!]
   connect: [ContentWhereUniqueInput!]
@@ -253,6 +257,7 @@ type Content {
   id: ID!
   title: String
   author: User
+  classes: String
   tags(where: TagWhereInput! = {}, orderBy: [TagOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: TagWhereUniqueInput): [Tag!]
   tagsCount(where: TagWhereInput! = {}): Int
   basicpages(where: BasicPageWhereInput! = {}, orderBy: [BasicPageOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: BasicPageWhereUniqueInput): [BasicPage!]
@@ -277,6 +282,7 @@ input ContentWhereInput {
   id: IDFilter
   title: StringFilter
   author: UserWhereInput
+  classes: StringFilter
   tags: TagManyRelationFilter
   basicpages: BasicPageManyRelationFilter
   status: StringNullableFilter
@@ -292,6 +298,7 @@ input BasicPageManyRelationFilter {
 input ContentOrderByInput {
   id: OrderDirection
   title: OrderDirection
+  classes: OrderDirection
   status: OrderDirection
   publishedAt: OrderDirection
 }
@@ -299,6 +306,7 @@ input ContentOrderByInput {
 input ContentUpdateInput {
   title: String
   author: UserRelateToOneForUpdateInput
+  classes: String
   tags: TagRelateToManyForUpdateInput
   basicpages: BasicPageRelateToManyForUpdateInput
   content: JSON
@@ -321,6 +329,7 @@ input ContentUpdateArgs {
 input ContentCreateInput {
   title: String
   author: UserRelateToOneForCreateInput
+  classes: String
   tags: TagRelateToManyForCreateInput
   basicpages: BasicPageRelateToManyForCreateInput
   content: JSON
@@ -522,6 +531,58 @@ input ImageCreateInput {
   image: ImageFieldInput
 }
 
+type SiteSetting {
+  id: ID!
+  title: String
+  url: String
+  metaDescription: String
+  logo: ImageFieldOutput
+  favicon: ImageFieldOutput
+}
+
+input SiteSettingWhereUniqueInput {
+  id: ID
+  url: String
+}
+
+input SiteSettingWhereInput {
+  AND: [SiteSettingWhereInput!]
+  OR: [SiteSettingWhereInput!]
+  NOT: [SiteSettingWhereInput!]
+  id: IDFilter
+  title: StringFilter
+  url: StringFilter
+  metaDescription: StringFilter
+}
+
+input SiteSettingOrderByInput {
+  id: OrderDirection
+  title: OrderDirection
+  url: OrderDirection
+  metaDescription: OrderDirection
+}
+
+input SiteSettingUpdateInput {
+  title: String
+  url: String
+  metaDescription: String
+  logo: ImageFieldInput
+  favicon: ImageFieldInput
+}
+
+input SiteSettingUpdateArgs {
+  where: SiteSettingWhereUniqueInput!
+  data: SiteSettingUpdateInput!
+}
+
+input SiteSettingCreateInput {
+  title: String
+  url: String
+  metaDescription: String
+  logo: ImageFieldInput
+  favicon: ImageFieldInput
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -564,6 +625,12 @@ type Mutation {
   updateImages(data: [ImageUpdateArgs!]!): [Image]
   deleteImage(where: ImageWhereUniqueInput!): Image
   deleteImages(where: [ImageWhereUniqueInput!]!): [Image]
+  createSiteSetting(data: SiteSettingCreateInput!): SiteSetting
+  createSiteSettings(data: [SiteSettingCreateInput!]!): [SiteSetting]
+  updateSiteSetting(where: SiteSettingWhereUniqueInput!, data: SiteSettingUpdateInput!): SiteSetting
+  updateSiteSettings(data: [SiteSettingUpdateArgs!]!): [SiteSetting]
+  deleteSiteSetting(where: SiteSettingWhereUniqueInput!): SiteSetting
+  deleteSiteSettings(where: [SiteSettingWhereUniqueInput!]!): [SiteSetting]
   endSession: Boolean!
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
@@ -605,6 +672,9 @@ type Query {
   image(where: ImageWhereUniqueInput!): Image
   images(where: ImageWhereInput! = {}, orderBy: [ImageOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ImageWhereUniqueInput): [Image!]
   imagesCount(where: ImageWhereInput! = {}): Int
+  siteSetting(where: SiteSettingWhereUniqueInput!): SiteSetting
+  siteSettings(where: SiteSettingWhereInput! = {}, orderBy: [SiteSettingOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: SiteSettingWhereUniqueInput): [SiteSetting!]
+  siteSettingsCount(where: SiteSettingWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }

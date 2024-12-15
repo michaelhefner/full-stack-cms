@@ -4,3 +4,4 @@
 */.next
 *.db
 */public/images/*
+*.env.local

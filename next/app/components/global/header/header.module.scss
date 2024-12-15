@@ -1,0 +1,47 @@
+/* /c:/Users/Micha/Documents/projects/keystone/full-stack-cms/next/app/components/global/header/header.module.css */
+@import "../../../styles/util/variables.module.scss";
+.header {
+    background-color: $dark;
+    border-bottom: 1px solid #e0e0e0;
+    color: white;
+    .headerContainer {
+        max-width: 1280px;
+        display: grid;
+        grid-template-columns: 2fr 5fr 2fr;
+        margin: auto;
+
+        .headerTitle {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            padding: 1rem 0;
+            // margin-right: auto;
+        }
+
+        .headerNav {
+            align-self: flex-end;
+            ul {
+                display: flex;
+                justify-content: center;
+                flex-direction: row;
+
+                a {
+                    display: block;
+                    margin: 0 10px;
+                    text-decoration: none;
+                    padding: .5rem 1rem;
+                    border: solid 1px $light;
+                    border-radius: 5px 5px 0 0;
+                    border-bottom: none;
+                    transition: all .3s ease;
+                    color: $light;
+                    &:hover {
+                        text-decoration: underline;
+                        background-color: $light;
+                        color: $dark
+                    }
+                }
+            }
+        }
+    }
+}

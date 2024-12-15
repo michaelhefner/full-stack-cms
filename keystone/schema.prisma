@@ -12,10 +12,15 @@ generator client {
 }
 
 model Navigation {
-  id         String     @id @default(cuid())
-  title      String     @default("")
-  url        String     @unique @default("")
-  basicpages BasicPage? @relation("BasicPage_navigation")
+  id                     String       @id @default(cuid())
+  title                  String       @default("")
+  url                    String       @unique @default("")
+  basicpages             BasicPage?   @relation("BasicPage_navigation")
+  parent                 Navigation?  @relation("Navigation_parent", fields: [parentId], references: [id])
+  parentId               String?      @map("parent")
+  from_Navigation_parent Navigation[] @relation("Navigation_parent")
+
+  @@index([parentId])
 }
 
 model BasicPage {
@@ -38,6 +43,7 @@ model Content {
   title       String      @default("")
   author      User?       @relation("Content_author", fields: [authorId], references: [id])
   authorId    String?     @map("author")
+  classes     String      @default("section-content")
   tags        Tag[]       @relation("Content_tags")
   basicpages  BasicPage[] @relation("BasicPage_content")
   content     String      @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
@@ -76,4 +82,21 @@ model Image {
   image_width     Int?
   image_height    Int?
   image_extension String?
+}
+
+model SiteSetting {
+  id                String  @id @default(cuid())
+  title             String  @default("")
+  url               String  @unique @default("")
+  metaDescription   String  @default("")
+  logo_id           String?
+  logo_filesize     Int?
+  logo_width        Int?
+  logo_height       Int?
+  logo_extension    String?
+  favicon_id        String?
+  favicon_filesize  Int?
+  favicon_width     Int?
+  favicon_height    Int?
+  favicon_extension String?
 }

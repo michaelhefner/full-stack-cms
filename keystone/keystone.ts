@@ -6,6 +6,7 @@ import { isAdmin } from './src/isAdmin';
 import { session, withAuth } from './auth';
 import { componentBlocks } from './src/component-blocks';
 import dotenv from 'dotenv';
+
 dotenv.config();
 
 const {
@@ -53,6 +54,26 @@ export default withAuth(config({
                         inlineConnect: true,
                     },
                 }),
+                parent: relationship({
+                    ref: 'Navigation',
+                    many: false,
+                    ui: {
+                        displayMode: 'cards',
+                        cardFields: ['title'],
+                        inlineEdit: { fields: ['title'] },
+                        linkToItem: true,
+                        inlineConnect: true,
+                    },
+                }),
+                // status: relationship({
+                //     ref: 'Basicpage.status',
+                //     many: true,
+                //     ui: {
+                //         displayMode: 'cards',
+                //         cardFields: ['status'],
+                //         linkToItem: true,
+                //     },
+                // }),
             },
         }),
         BasicPage: list({
@@ -147,6 +168,7 @@ export default withAuth(config({
                     delete: isAdmin,
                 }
             },
+
             fields: {
                 ...group({
                     label: 'Settings',
@@ -164,6 +186,7 @@ export default withAuth(config({
                             },
                             many: false,
                         }),
+                        classes: text({ defaultValue: 'section-content' }),
                         tags: relationship({
                             ref: 'Tag.content',
                             many: true,
@@ -179,14 +202,11 @@ export default withAuth(config({
                         basicpages: relationship({ ref: 'BasicPage.content', many: true }),
                     },
                 }),
+                
                 content: document({
                     formatting: true,
                     layouts: [
-                        [1, 1],
-                        [1, 1, 1],
-                        [2, 1],
-                        [1, 2],
-                        [1, 2, 1],
+                        [1],
                     ],
                     links: true,
                     dividers: true,
@@ -266,6 +286,26 @@ export default withAuth(config({
                 image: image({ storage: 'my_local_images' }),
             },
             access: allowAll,
+        }),
+        SiteSetting: list({
+            access: {
+                operation: {
+                    query: allowAll,
+                    create: isAdmin,
+                    update: isAdmin,
+                    delete: isAdmin,
+                }
+            },
+            ui: {
+                isHidden: false,
+            },
+            fields: {
+                title: text({ validation: { isRequired: true } }),
+                url: text({ validation: { isRequired: true }, isIndexed: 'unique' }),
+                metaDescription: text(),
+                logo: image({ storage: 'my_local_images' }),
+                favicon: image({ storage: 'my_local_images' }),
+            },
         }),
     },
     storage: {

@@ -11,7 +11,8 @@
     "next:dev": "cd next && npm run dev -- -p 3001",
     "next:start": "cd next && npm run start -- -p 3001",
     "start:build": "npm run keystone:build && npm run next:build",
-    "install": "cd keystone && npm install",
+    "keystone:install": "cd keystone && npm install",
+    "next:install": "cd next && npm install",
     "prisma": "cd next && npx prisma studio"
   },
   "author": "Michael Hefner",

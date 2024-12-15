@@ -33,3 +33,18 @@
     /* height: 0; */
     opacity: 0;
 }
+[role="textbox"] {
+    min-width: 100%;
+    border: solid 1px red;
+}
+main > div > div {
+    display: flex !important;
+    flex-direction: column;
+}
+main > div > div > :first-child {
+    width: 100%;
+}
+main > div > div [role="textbox"] {
+    min-height: 600px;
+    height: 100%;
+}

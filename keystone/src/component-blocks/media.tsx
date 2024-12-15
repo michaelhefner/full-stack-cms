@@ -7,8 +7,15 @@ import { component, fields, NotEditable } from '@keystone-6/fields-document/comp
 export const media = component({
   label: 'Media',
   schema: {
+    heading: fields.text({
+      label: 'Heading',
+    }),
     imageSrc: fields.text({
       label: 'Image URL',
+    }),
+    imageAlt: fields.text({
+      label: 'Alt text',
+      defaultValue: 'Image',
     }),
     caption: fields.conditional(fields.checkbox({ label: 'Has caption' }), {
       false: fields.empty(),
