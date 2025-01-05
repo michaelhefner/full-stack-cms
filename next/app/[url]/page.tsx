@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { GetBasicPages, GetBasicPageNavigation } from "../../prisma/basic-pages/get";
-import { DocumentRenderer, type DocumentRendererProps } from '@keystone-6/document-renderer'
+import type { DocumentRendererProps } from '@keystone-6/document-renderer';
+import { CustomRenderer } from '../components/CustomRenderer/CustomRenderer';
 import { GetNavigation } from "@/prisma/navigation/get";
 
 const renderers: DocumentRendererProps['renderers'] = {
@@ -43,33 +44,25 @@ export default async function Page({ params }: { params: { url: string } }) {
     console.error('Navigation not found');
     return <div>Navigation not found</div>;
   }
-  const basicPagesData = await GetBasicPages(navigation[0].id);
-  if (basicPagesData) {
-    basicPagesData.forEach(page => {
-      console.log('basicPages test', JSON.stringify(page.content));
-    });
-  }
+  const page = await GetBasicPages(navigation[0].id);
+  
   return (
     <div>
-      {
-        basicPagesData && basicPagesData.length ? basicPagesData.map(page => {
-          return (
-            <div key={page.id}>
-              <h1>{page.title}</h1>
-              {page['content'] && page['content'].length ? page['content'].map(content => {
-                if (content.status !== 'published') return null;
-                return (
-                  // className={content.classes}
-                  <div  key={content.id}>
-                    <h2>{content.title}</h2>
-                    <DocumentRenderer document={JSON.parse(content.content)} renderers={renderers} />
-                  </div>
-                )
-              }) : null}
+    {page && (
+      <div key={page.id}>
+        { page['content'] && page['content'].length ? page['content'].map(content => {
+        // if (content.status !== 'published') return null;
+        return (
+          <div style={{
+            maxWidth: '1280px',
+            margin: '0 auto',
+          }} key={content.id}>
+            <CustomRenderer document={JSON.parse(content.content)} renderers={renderers} />
             </div>
-          );
-        }) : null}
-
+        )
+      }) : null}
+      </div>
+    )}
     </div>
   );
 }

@@ -28,54 +28,6 @@ export default withAuth(config({
         url: dbURL,
     },
     lists: {
-        Navigation: list({
-            access: {
-                operation: {
-                    query: allowAll,
-                    create: isAdmin,
-                    update: isAdmin,
-                    delete: isAdmin,
-                }
-            },
-            ui: {
-                isHidden: false,
-            },
-            fields: {
-                title: text({ validation: { isRequired: true } }),
-                url: text({ validation: { isRequired: true }, isIndexed: 'unique' }),
-                basicpages: relationship({
-                    ref: 'BasicPage.navigation',
-                    many: false,
-                    ui: {
-                        displayMode: 'cards',
-                        cardFields: ['title'],
-                        inlineEdit: { fields: ['title'] },
-                        linkToItem: true,
-                        inlineConnect: true,
-                    },
-                }),
-                parent: relationship({
-                    ref: 'Navigation',
-                    many: false,
-                    ui: {
-                        displayMode: 'cards',
-                        cardFields: ['title'],
-                        inlineEdit: { fields: ['title'] },
-                        linkToItem: true,
-                        inlineConnect: true,
-                    },
-                }),
-                // status: relationship({
-                //     ref: 'Basicpage.status',
-                //     many: true,
-                //     ui: {
-                //         displayMode: 'cards',
-                //         cardFields: ['status'],
-                //         linkToItem: true,
-                //     },
-                // }),
-            },
-        }),
         BasicPage: list({
             access: {
                 operation: {
@@ -119,7 +71,7 @@ export default withAuth(config({
                         cardFields: ['title'],
                         linkToItem: true,
                         inlineConnect: true,
-                        inlineCreate: { fields: ['title', 'content', 'tags', 'author', 'status'] },
+                        inlineCreate: { fields: ['title', 'content', 'tags', 'author'] },
                     },
                 }),
                 author: relationship({
@@ -145,18 +97,72 @@ export default withAuth(config({
                         inlineCreate: { fields: ['name'] },
                     },
                 }),
-                status: select({
-                    defaultValue: 'draft',
-                    ui: { displayMode: 'segmented-control' },
-                    options: [
-                        { label: 'Published', value: 'published' },
-                        { label: 'Draft', value: 'draft' },
-                        { label: 'Archived', value: 'archived' },
-                    ],
+                status: relationship({
+                    ref: 'Status.pagestatus',
+                    many: false,
+                    ui: {
+                        displayMode: 'cards',
+                        cardFields: ['status'],
+                        inlineEdit: { fields: ['title', 'status'] },
+                        linkToItem: true,
+                        inlineConnect: true,
+                        inlineCreate: { fields: ['title', 'status'] },
+                    },
                 }),
                 publishedAt: timestamp(
                     {defaultValue: { kind: 'now' },}
                 ),
+            },
+        }),
+        Navigation: list({
+            access: {
+                operation: {
+                    query: allowAll,
+                    create: isAdmin,
+                    update: isAdmin,
+                    delete: isAdmin,
+                }
+            },
+            ui: {
+                isHidden: false,
+            },
+            fields: {
+                title: text({ validation: { isRequired: true } }),
+                url: text({ validation: { isRequired: true }, isIndexed: 'unique' }),
+                basicpages: relationship({
+                    ref: 'BasicPage.navigation',
+                    many: false,
+                    ui: {
+                        displayMode: 'cards',
+                        cardFields: ['title'],
+                        inlineEdit: { fields: ['title'] },
+                        linkToItem: true,
+                        inlineConnect: true,
+                    },
+                }),
+                parent: relationship({
+                    ref: 'Navigation',
+                    many: false,
+                    ui: {
+                        displayMode: 'cards',
+                        cardFields: ['title'],
+                        inlineEdit: { fields: ['title'] },
+                        linkToItem: true,
+                        inlineConnect: true,
+                    },
+                }),
+                status: relationship({
+                    ref: 'Status.navigation',
+                    many: true,
+                    ui: {
+                        displayMode: 'cards',
+                        cardFields: ['status'],
+                        inlineEdit: { fields: ['status'] },
+                        linkToItem: true,
+                        inlineConnect: true,
+                        inlineCreate: { fields: ['status'] },
+                    },
+                }),
             },
         }),
         Content: list({
@@ -172,7 +178,7 @@ export default withAuth(config({
             fields: {
                 ...group({
                     label: 'Settings',
-                    description: 'Content settings',
+                    description: 'Content Block Settings',
                     fields: {
                         title: text({ validation: { isRequired: true } }),
                         author: relationship({
@@ -215,41 +221,9 @@ export default withAuth(config({
                     },
                     componentBlocks,
                 }),
-                status: select({
-                    defaultValue: 'draft',
-                    ui: { displayMode: 'segmented-control' },
-                    options: [
-                        { label: 'Published', value: 'published' },
-                        { label: 'Draft', value: 'draft' },
-                        { label: 'Archived', value: 'archived' },
-                    ],
-                }),
                 publishedAt: timestamp(
                     {defaultValue: { kind: 'now' },}
                 ),
-            },
-        }),
-        User: list({
-            access: {
-                operation: {
-                    create: isAdmin,
-                    update: isAdmin,
-                    delete: isAdmin,
-                    query: ({ session, context, listKey, operation }) => true,
-                }
-            },
-            fields: {
-                name: text({ validation: { isRequired: true } }),
-                email: text({
-                    isIndexed: 'unique',
-                }),
-                password: password({ validation: { isRequired: true } }),
-                isAdmin: checkbox({ defaultValue: false }),
-                content: relationship({ ref: 'Content.author', many: true }),
-                basicpages: relationship({ ref: 'BasicPage.author', many: true }),
-                createdAt: timestamp({
-                    defaultValue: { kind: 'now' },
-                }),
             },
         }),
         Tag: list({
@@ -287,6 +261,28 @@ export default withAuth(config({
             },
             access: allowAll,
         }),
+        Status: list({
+            access: allowAll,
+            fields: {
+                title: text({ validation: { isRequired: true } }),
+                // for: relationship({ ref: 'Navigation', many: false }),
+                status: select({
+                    options: [
+                        { label: 'Published', value: 'published' },
+                        { label: 'Draft', value: 'draft' },
+                        { label: 'Archived', value: 'archived' },
+                    ],
+                    validation: { isRequired: true },
+                    defaultValue: 'draft',
+                    ui: {
+                        displayMode: 'segmented-control',
+                    },
+                }),
+                // content: relationship({ ref: 'Content.status', many: false }),
+                pagestatus: relationship({ ref: 'BasicPage.status', many: true }),
+                navigation: relationship({ ref: 'Navigation.status', many: true }),
+            },
+        }),
         SiteSetting: list({
             access: {
                 operation: {
@@ -305,6 +301,43 @@ export default withAuth(config({
                 metaDescription: text(),
                 logo: image({ storage: 'my_local_images' }),
                 favicon: image({ storage: 'my_local_images' }),
+            },
+        }),
+        User: list({
+            access: {
+                operation: {
+                    create: isAdmin,
+                    update: isAdmin,
+                    delete: isAdmin,
+                    query: ({ session, context, listKey, operation }) => true,
+                }
+            },
+            fields: {
+                name: text({ validation: { isRequired: true } }),
+                email: text({
+                    isIndexed: 'unique',
+                }),
+                password: password({ validation: { isRequired: true } }),
+                isAdmin: checkbox({ defaultValue: false }),
+                content: relationship({ ref: 'Content.author', many: true }),
+                basicpages: relationship({ ref: 'BasicPage.author', many: true }),
+                createdAt: timestamp({
+                    defaultValue: { kind: 'now' },
+                }),
+            },
+        }),
+        Group: list({
+            access: {
+                operation: {
+                    create: isAdmin,
+                    update: isAdmin,
+                    delete: isAdmin,
+                    query: ({ session, context, listKey, operation }) => true,
+                }
+            },
+            fields: {
+                name: text(),
+                navigation: relationship({ ref: 'Navigation', many: true }),
             },
         }),
     },

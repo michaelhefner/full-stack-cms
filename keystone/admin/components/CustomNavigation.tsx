@@ -21,7 +21,7 @@ const localStyle = {
 export function CustomNavigation ({ lists, authenticatedItem }: NavigationProps) {
   return (
     <NavigationContainer authenticatedItem={authenticatedItem}>
-      <NavItem href="/">Dashboard</NavItem>
+      {/* <NavItem href="/">Dashboard</NavItem> */}
       
       <div className='collapsed'>
         <p className='li-placeholder' onClick={(e) => ((e.target as HTMLElement).parentElement as HTMLElement).classList.toggle('collapsed')}>Admin Menu</p>

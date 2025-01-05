@@ -4,9 +4,12 @@
     .contentContainer {
       padding: 1rem 1rem 1rem 0;
       max-width: 60ch;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      
       .h1 {
         font-size: 2.5rem;
-        font-weight: 700;
       }
       .h2 {
         font-size: 1.875rem;

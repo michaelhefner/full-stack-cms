@@ -1,9 +1,10 @@
-import Link from "next/link";
 import { GetBasicPages, GetBasicPageNavigation } from "../prisma/basic-pages/get";
 import type { DocumentRendererProps } from '@keystone-6/document-renderer'
 import { GetNavigation } from "@/prisma/navigation/get";
 
 import { CustomRenderer } from './components/CustomRenderer/CustomRenderer'
+import Image from "next/image";
+import { GetStatus } from "@/prisma/statuses/get";
 const renderers: DocumentRendererProps['renderers'] = {
   block: {
     heading({ level, children, textAlign }) {
@@ -12,7 +13,7 @@ const renderers: DocumentRendererProps['renderers'] = {
     },
   },
   image: ({ src, alt }) => {
-    return <img src={src} alt={alt} />
+    return <Image src={src} alt={alt} />
   }
 }
 
@@ -37,29 +38,27 @@ export default async function Page({ params }: { params: { url: string } }) {
     return <div>Navigation not found</div>;
   }
   // console.log('navigation', navigation[0].id);
-  const basicPagesData = await GetBasicPages(navigation[0].id);
-  // console.log('basicPages', basicPagesData[0].content);
+  const page = await GetBasicPages(navigation[0].id);
+  console.log('page', page);
+  // const status = page && page.status ? await GetStatus(page.status) : null;
+  // console.log(status);
   return (
     <div>
-      {
-        basicPagesData && basicPagesData.length ? basicPagesData.map(page => {
-          return (
-            <div key={page.id}>
-              {page['content'] && page['content'].length ? page['content'].map(content => {
-                if (content.status !== 'published') return null;
+            {page && page.status?.status === 'published' && (
+              <div key={page.id}>
+                { page['content'] && page['content'].length ? page['content'].map(content => {
+                // if (content.status !== 'published') return null;
                 return (
                   <div style={{
                     maxWidth: '1280px',
                     margin: '0 auto',
                   }} key={content.id}>
                     <CustomRenderer document={JSON.parse(content.content)} renderers={renderers} />
-                  </div>
+                    </div>
                 )
               }) : null}
-            </div>
-          );
-        }) : null}
-
+              </div>
+            )}
     </div>
   );
 }

@@ -11,7 +11,7 @@ const GetAllBasicPages = async () =>{
 }
 const GetBasicPages = async (id: string) =>{
     if (prisma.basicPage && id) {    
-        return await prisma.basicPage.findMany({
+        return await prisma.basicPage.findFirst({
             where: {
               navigation: {
                 id: {
@@ -39,7 +39,6 @@ const GetBasicPages = async (id: string) =>{
                 select: {
                   content: true,
                   title: true,
-                  status: true,
                   authorId: true,
                   id: true,
                 }

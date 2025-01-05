@@ -1,9 +1,9 @@
 /* /c:/Users/Micha/Documents/projects/keystone/full-stack-cms/next/app/components/global/header/header.module.css */
 @import "../../../styles/util/variables.module.scss";
+
 .header {
-    background-color: $dark;
-    border-bottom: 1px solid #e0e0e0;
-    color: white;
+    border-bottom: 1px solid $lines;
+
     .headerContainer {
         max-width: 1280px;
         display: grid;
@@ -12,18 +12,63 @@
 
         .headerTitle {
             font-size: 24px;
-            font-weight: bold;
-            color: white;
             padding: 1rem 0;
             // margin-right: auto;
         }
 
         .headerNav {
             align-self: flex-end;
+
             ul {
                 display: flex;
                 justify-content: center;
                 flex-direction: row;
+
+                &.topLevelNav {
+                    li.topLevelNavItem {
+                        position: relative;
+                        padding-right: 10px;
+
+                        &::after {
+                            content: '>';
+                            transform: rotate(90deg) scaleX(.75) scaleY(1.5);
+                            margin: 0 10px;
+                            position: absolute;
+                            right: 5px;
+                            bottom: 25%;
+                        }
+                        &.active {
+                            &::after {
+                                transform: rotate(135deg) scaleX(1.5) scaleY(.75);
+                            }
+                        }
+                    }
+                }
+                &.secondaryLevelNav {
+                    display: none;
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    background-color: $light;
+                    border: solid 1px $light;
+                    border-radius: 0 0 5px 5px;
+                    flex-direction: column;
+                    padding: 0;
+                    z-index: 1;
+
+                    li {
+                        display: block;
+                        margin: 0;
+                        padding: .5rem 1rem;
+                        border-bottom: solid 1px $dark;
+                        transition: all .3s ease;
+
+                        &:hover {
+                            background-color: $dark;
+                            color: $light;
+                        }
+                    }
+                }
 
                 a {
                     display: block;
@@ -34,7 +79,7 @@
                     border-radius: 5px 5px 0 0;
                     border-bottom: none;
                     transition: all .3s ease;
-                    color: $light;
+
                     &:hover {
                         text-decoration: underline;
                         background-color: $light;

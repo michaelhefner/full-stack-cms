@@ -11,23 +11,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model SiteSetting {
-  id                String  @id @default(cuid())
-  title             String  @default("")
-  url               String  @unique @default("")
-  metaDescription   String  @default("")
-  logo_id           String?
-  logo_filesize     Int?
-  logo_width        Int?
-  logo_height       Int?
-  logo_extension    String?
-  favicon_id        String?
-  favicon_filesize  Int?
-  favicon_width     Int?
-  favicon_height    Int?
-  favicon_extension String?
-}
-
 model Navigation {
   id                     String       @id @default(cuid())
   title                  String       @default("")
@@ -35,6 +18,7 @@ model Navigation {
   basicpages             BasicPage?   @relation("BasicPage_navigation")
   parent                 Navigation?  @relation("Navigation_parent", fields: [parentId], references: [id])
   parentId               String?      @map("parent")
+  status                 Status[]     @relation("Navigation_status")
   from_Navigation_parent Navigation[] @relation("Navigation_parent")
 
   @@index([parentId])
@@ -49,10 +33,12 @@ model BasicPage {
   author       User?       @relation("BasicPage_author", fields: [authorId], references: [id])
   authorId     String?     @map("author")
   tags         Tag[]       @relation("BasicPage_tags")
-  status       String?     @default("draft")
+  status       Status?     @relation("BasicPage_status", fields: [statusId], references: [id])
+  statusId     String?     @map("status")
   publishedAt  DateTime?   @default(now())
 
   @@index([authorId])
+  @@index([statusId])
 }
 
 model Content {
@@ -64,21 +50,9 @@ model Content {
   tags        Tag[]       @relation("Content_tags")
   basicpages  BasicPage[] @relation("BasicPage_content")
   content     String      @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
-  status      String?     @default("draft")
   publishedAt DateTime?   @default(now())
 
   @@index([authorId])
-}
-
-model User {
-  id         String      @id @default(cuid())
-  name       String      @default("")
-  email      String      @unique @default("")
-  password   String
-  isAdmin    Boolean     @default(false)
-  content    Content[]   @relation("Content_author")
-  basicpages BasicPage[] @relation("BasicPage_author")
-  createdAt  DateTime?   @default(now())
 }
 
 model Tag {
@@ -99,4 +73,40 @@ model Image {
   image_width     Int?
   image_height    Int?
   image_extension String?
+}
+
+model Status {
+  id         String       @id @default(cuid())
+  title      String       @default("")
+  status     String       @default("draft")
+  pagestatus BasicPage[]  @relation("BasicPage_status")
+  navigation Navigation[] @relation("Navigation_status")
+}
+
+model SiteSetting {
+  id                String  @id @default(cuid())
+  title             String  @default("")
+  url               String  @unique @default("")
+  metaDescription   String  @default("")
+  logo_id           String?
+  logo_filesize     Int?
+  logo_width        Int?
+  logo_height       Int?
+  logo_extension    String?
+  favicon_id        String?
+  favicon_filesize  Int?
+  favicon_width     Int?
+  favicon_height    Int?
+  favicon_extension String?
+}
+
+model User {
+  id         String      @id @default(cuid())
+  name       String      @default("")
+  email      String      @unique @default("")
+  password   String
+  isAdmin    Boolean     @default(false)
+  content    Content[]   @relation("Content_author")
+  basicpages BasicPage[] @relation("BasicPage_author")
+  createdAt  DateTime?   @default(now())
 }

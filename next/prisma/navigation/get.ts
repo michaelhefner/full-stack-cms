@@ -11,7 +11,20 @@ const GetNavigation = async (obj: any) =>{
 }
 const GetAllNavigation = async () =>{
     if (prisma.navigation) {    
-        return await prisma.navigation.findMany();
+        return await prisma.navigation.findMany({
+            select: {
+              id: true,
+              title: true,
+              status: true,
+              url: true,
+              parent: {
+                select: {
+                    title: true,
+                    url: true,
+                }
+            }
+        }
+        });
     }
     return null;
     

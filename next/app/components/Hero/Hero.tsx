@@ -1,5 +1,6 @@
 import React from 'react'
 import styles from './Hero.module.scss'
+import Image from 'next/image'
 
 type HeroProps = {
   heading: string
@@ -10,7 +11,7 @@ type HeroProps = {
   altText: string
 }
 
-export function Hero ({ heading, subheading, content, imageSrc,imageAlt, altText = 'Image' }: HeroProps) {
+export function Hero ({ heading, subheading, content, imageSrc,imageAlt }: HeroProps) {
 
   return (
     <div className={styles.heroContainer}>
@@ -21,10 +22,11 @@ export function Hero ({ heading, subheading, content, imageSrc,imageAlt, altText
       </div>
     <div className={styles.mediaContainer}>
       <div className={styles.iframePosition}>
-        <img
+        <Image
           className={styles.image}
-          width="100%"
-          height="480"
+          width={1000}
+          loading='eager'
+          height={1000}
           src={imageSrc}
           alt={imageAlt}
         />

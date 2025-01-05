@@ -18,6 +18,7 @@ const defaultElementRenderers: CustomRendererProps['renderers'] = {
     // so they will be wrapped with a <div /> by default
     // we can override that to whatever wrapper we want
     // for eg. using React.Fragment wraps the component with nothing
+    // eslint-disable-next-line 
     block: React.Fragment as any, // FIXME
     // customise blockquote elements with your own styles
     blockquote ({ children }) {

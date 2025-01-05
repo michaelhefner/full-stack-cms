@@ -36,11 +36,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const siteSettings = await GetSiteSettings();
-  console.log('siteSettings', siteSettings);
+  // const siteSettings = await GetSiteSettings();
   const allNavigationItems = await GetAllNavigation();
+  console.log('allNavigationItems', allNavigationItems);
   return (
     <html lang="en">
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`} >
         <Header navigationItems={allNavigationItems || []} title={pageTitle} />
